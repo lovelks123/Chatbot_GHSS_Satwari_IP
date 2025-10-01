@@ -1,142 +1,63 @@
-// ========= CONFIG =========
-const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLYWPnL6kt4Gv62TMB6L9eVv8xsfzrzzEEalmfUnvhF1Od16u8M8boOKM6EUH8X00jcQ/exec"; // your /exec
-const BRIDGE_TIMEOUT_MS = 30000;
-// ==========================
+// Put your web app EXEC URL here:
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbxWDSzNIWghMFoYUAfV6fMe0br-CeKdnK5g3MEIn4_7NHZ5mwiuuEtx8e623YdcPVqo4A/exec";
 
-function bridgeCall(paramsObj, timeoutMs = BRIDGE_TIMEOUT_MS){
-  return new Promise((resolve, reject)=>{
+// === Bridge caller ===
+function bridgeCall(paramsObj, timeoutMs=20000){
+  return new Promise((resolve,reject)=>{
     const url = new URL(EXEC_URL);
-    url.searchParams.set("page", "bridge");
-    Object.entries(paramsObj || {}).forEach(([k,v]) => url.searchParams.set(k, v));
+    url.searchParams.set("page","bridge");
+    Object.entries(paramsObj||{}).forEach(([k,v])=>url.searchParams.set(k,v));
+    const ifr=document.createElement("iframe"); ifr.style.display="none"; ifr.src=url.toString(); document.body.appendChild(ifr);
 
-    const ifr = document.createElement('iframe');
-    ifr.style.display = "none";
-    ifr.src = url.toString();
-    document.body.appendChild(ifr);
-
-    let gotReady = false;
-
-    const timer = setTimeout(()=>{
-      cleanup();
-      reject(new Error("Bridge timeout"));
-    }, timeoutMs);
-
+    const timer=setTimeout(()=>{cleanup(); reject(new Error("Bridge timeout"));},timeoutMs);
     function onMsg(ev){
-      const o = ev.origin || "";
-      // Accept messages only from Apps Script origins
-      if (!o.includes("script.google.com") && !o.includes("googleusercontent.com")) return;
-
-      const data = ev.data || {};
-      if (!data || data.source !== "gas-bridge") return;
-
-      if (data.payload && data.payload.type === "ready"){
-        gotReady = true;
-        console.log("[bridge] ready");
-        return; // wait for the "result" message next
-      }
-
-      clearTimeout(timer);
-      cleanup();
-
-      const payload = data.payload || {};
-      if (payload.ok === false) {
-        console.error("[bridge] error:", payload.error);
-        reject(new Error(String(payload.error || "Bridge error")));
-      } else {
-        resolve(payload);
-      }
+      console.log("[parent] msg from",ev.origin,ev.data);
+      if(!ev.data||ev.data.source!=="gas-bridge") return;
+      if(ev.data.payload.type==="ready"){ console.log("bridge ready"); return; }
+      clearTimeout(timer); cleanup();
+      const payload=ev.data.payload;
+      if(payload.ok===false) reject(new Error(payload.error||"Bridge error"));
+      else resolve(payload.data);
     }
-
-    function cleanup(){
-      window.removeEventListener("message", onMsg);
-      try { ifr.remove(); } catch(e){}
-    }
-
-    window.addEventListener("message", onMsg);
+    function cleanup(){window.removeEventListener("message",onMsg);try{ifr.remove();}catch(e){}}
+    window.addEventListener("message",onMsg);
   });
 }
 
-function showError(msg){
-  console.error(msg);
-  document.getElementById('message').innerHTML = '<span style="color:#b00020;font-weight:600">❌ '+msg+'</span>';
-}
-
-// ===== UI loaders =====
+// === UI functions ===
 async function loadUnits(){
-  try{
-    const res = await bridgeCall({ action: "units" });
-    const list = res && res.data ? res.data : ["All Units"];
-    const sel = document.getElementById('unitSelect');
-    sel.innerHTML = "";
-    list.forEach(u => {
-      const o = document.createElement('option'); o.value=u; o.textContent=u; sel.appendChild(o);
-    });
-    sel.onchange = ()=> loadChapters(sel.value);
-    loadChapters(sel.value);
-  }catch(err){ showError(err.message); }
+  document.getElementById('message').textContent="Loading units...";
+  const res=await bridgeCall({action:"units"}).catch(e=>{document.getElementById('message').textContent=e;return null;});
+  const sel=document.getElementById('unitSelect'); sel.innerHTML="";
+  (res&&res.units?res.units:["All Units"]).forEach(u=>{const o=document.createElement("option");o.value=u;o.textContent=u;sel.appendChild(o);});
+  sel.onchange=()=>loadChapters(sel.value); loadChapters(sel.value);
 }
-
 async function loadChapters(unit){
-  try{
-    const res = await bridgeCall({ action:"chapters", unit: unit||"" });
-    const list = (res && res.data && res.data.chapters) ? res.data.chapters : ["All Chapters"];
-    const sel = document.getElementById('chapterSelect');
-    sel.innerHTML = "";
-    list.forEach(c => {
-      const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);
-    });
-    sel.onchange = ()=> loadQuestions(unit, sel.value);
-    loadQuestions(unit, sel.value);
-  }catch(err){ showError(err.message); }
+  const res=await bridgeCall({action:"chapters",unit}).catch(()=>null);
+  const sel=document.getElementById('chapterSelect'); sel.innerHTML="";
+  (res&&res.chapters?res.chapters:["All Chapters"]).forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;sel.appendChild(o);});
+  sel.onchange=()=>loadQuestions(unit,sel.value); loadQuestions(unit,sel.value);
 }
-
-async function loadQuestions(unit, chapter){
-  try{
-    document.getElementById('questionList').textContent = "Loading...";
-    const res = await bridgeCall({ action:"questions", unit: unit||"", chapter: chapter||"All Chapters" });
-    const qs = (res && res.data && res.data.questions) ? res.data.questions : [];
-    const box = document.getElementById('questionList'); box.innerHTML = "";
-    if (!qs.length) {
-      box.innerHTML = "<div class='muted'>No questions found.</div>";
-      return;
-    }
-    qs.forEach(q=>{
-      const d=document.createElement('div'); d.className='qitem'; d.textContent=q.question;
-      d.onclick=()=>{
-        document.getElementById('resultArea').style.display='block';
-        document.getElementById('confidence').textContent="Answer to: "+q.question;
-        document.getElementById('answerText').textContent=q.answer||"(No answer)";
-      };
-      box.appendChild(d);
-    });
-    document.getElementById('message').textContent = "";
-  }catch(err){ showError(err.message); }
+async function loadQuestions(unit,chapter){
+  const box=document.getElementById('questionList'); box.innerHTML="Loading...";
+  const res=await bridgeCall({action:"questions",unit,chapter}).catch(()=>null); box.innerHTML="";
+  if(!res||!res.questions||!res.questions.length){ box.innerHTML="<div class='muted'>No questions.</div>"; return; }
+  res.questions.forEach(q=>{const d=document.createElement("div"); d.className="qitem"; d.textContent=q.question; d.onclick=()=>{document.getElementById("resultArea").style.display="block"; document.getElementById("confidence").textContent="Answer to: "+q.question; document.getElementById("answerText").textContent=q.answer;}; box.appendChild(d);});
 }
-
 async function ask(){
-  try{
-    const unit = document.getElementById('unitSelect').value || "All Units";
-    const chapter = document.getElementById('chapterSelect').value || "All Chapters";
-    const q = document.getElementById('studentQuestion').value.trim();
-    document.getElementById('message').textContent = "Searching...";
-    document.getElementById('resultArea').style.display = 'none';
-    const res = await bridgeCall({ action:"ask", unit, chapter, question:q, minScore:"40" });
-    document.getElementById('message').textContent = "";
-    document.getElementById('resultArea').style.display = 'block';
-
-    const data = res && res.data;
-    if (!data || !data.matched_question) {
-      const score = data ? (data.score||0) : 0;
-      document.getElementById('confidence').textContent = "No close match (score "+score+"%)";
-      document.getElementById('answerText').textContent = "No close match found. Try rephrasing.";
-      return;
-    }
-    document.getElementById('confidence').textContent = "Confidence: "+data.score+"% (matched: "+data.matched_question+")";
-    document.getElementById('answerText').textContent = data.answer || "(No answer)";
-  }catch(err){ showError(err.message); }
+  const unit=document.getElementById('unitSelect').value||"All Units";
+  const chapter=document.getElementById('chapterSelect').value||"All Chapters";
+  const q=document.getElementById('studentQuestion').value.trim();
+  document.getElementById('message').textContent="Searching...";
+  const res=await bridgeCall({action:"ask",unit,chapter,question:q}).catch(e=>{document.getElementById('message').textContent=e;return null;});
+  document.getElementById('message').textContent="";
+  if(!res) return;
+  document.getElementById('resultArea').style.display="block";
+  if(!res.matched_question){ document.getElementById('confidence').textContent="No match"; document.getElementById('answerText').textContent="Try again."; return; }
+  document.getElementById('confidence').textContent="Confidence: "+res.score+"% (matched: "+res.matched_question+")";
+  document.getElementById('answerText').textContent=res.answer;
 }
+document.getElementById('askBtn').addEventListener('click',ask);
 
-document.getElementById('askBtn').addEventListener('click', ask);
+// init
 loadUnits();
-
-
