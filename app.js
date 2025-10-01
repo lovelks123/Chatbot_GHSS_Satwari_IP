@@ -1,19 +1,20 @@
-// ============ CONFIG ============
-const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLDWdCWIz27UvyVz9XhaBTBW5vby5q3ai3hkY4qMTf_sN0hfrgmJja7T0-PjpUDLZ6nw/exec"; // <- your Apps Script /exec
-// ================================
+// ========= CONFIG =========
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLDWdCWIz27UvyVz9XhaBTBW5vby5q3ai3hkY4qMTf_sN0hfrgmJja7T0-PjpUDLZ6nw/exec"; // your /exec
+const BRIDGE_TIMEOUT_MS = 30000;
+// ==========================
 
-// Call Apps Script via a hidden iframe bridge (no JSONP, no CORS)
-function bridgeCall(paramsObj, timeoutMs = 15000){
+function bridgeCall(paramsObj, timeoutMs = BRIDGE_TIMEOUT_MS){
   return new Promise((resolve, reject)=>{
-    const id = "b_" + Math.random().toString(36).slice(2);
     const url = new URL(EXEC_URL);
     url.searchParams.set("page", "bridge");
-    Object.keys(paramsObj||{}).forEach(k => url.searchParams.set(k, paramsObj[k]));
+    Object.entries(paramsObj || {}).forEach(([k,v]) => url.searchParams.set(k, v));
 
     const ifr = document.createElement('iframe');
     ifr.style.display = "none";
     ifr.src = url.toString();
     document.body.appendChild(ifr);
+
+    let gotReady = false;
 
     const timer = setTimeout(()=>{
       cleanup();
@@ -21,20 +22,34 @@ function bridgeCall(paramsObj, timeoutMs = 15000){
     }, timeoutMs);
 
     function onMsg(ev){
+      const o = ev.origin || "";
       // Accept messages only from Apps Script origins
-      const okOrigin = ev.origin.includes("script.google.com") || ev.origin.includes("googleusercontent.com");
-      if (!okOrigin) return;
+      if (!o.includes("script.google.com") && !o.includes("googleusercontent.com")) return;
+
       const data = ev.data || {};
-      if (data && data.source === "gas-bridge") {
-        clearTimeout(timer);
-        cleanup();
-        resolve(data.payload);
+      if (!data || data.source !== "gas-bridge") return;
+
+      if (data.payload && data.payload.type === "ready"){
+        gotReady = true;
+        console.log("[bridge] ready");
+        return; // wait for the "result" message next
+      }
+
+      clearTimeout(timer);
+      cleanup();
+
+      const payload = data.payload || {};
+      if (payload.ok === false) {
+        console.error("[bridge] error:", payload.error);
+        reject(new Error(String(payload.error || "Bridge error")));
+      } else {
+        resolve(payload);
       }
     }
 
     function cleanup(){
       window.removeEventListener("message", onMsg);
-      setTimeout(()=> ifr.remove(), 0);
+      try { ifr.remove(); } catch(e){}
     }
 
     window.addEventListener("message", onMsg);
@@ -43,18 +58,18 @@ function bridgeCall(paramsObj, timeoutMs = 15000){
 
 function showError(msg){
   console.error(msg);
-  document.getElementById('message').innerHTML = '<span class="error">❌ '+msg+'</span>';
+  document.getElementById('message').innerHTML = '<span style="color:#b00020;font-weight:600">❌ '+msg+'</span>';
 }
 
-// UI loaders using the bridge
+// ===== UI loaders =====
 async function loadUnits(){
   try{
     const res = await bridgeCall({ action: "units" });
+    const list = res && res.data ? res.data : ["All Units"];
     const sel = document.getElementById('unitSelect');
-    sel.innerHTML="";
-    const units = (res && res.data) || ["All Units"];
-    units.forEach(u => {
-      const o=document.createElement('option'); o.value=u; o.textContent=u; sel.appendChild(o);
+    sel.innerHTML = "";
+    list.forEach(u => {
+      const o = document.createElement('option'); o.value=u; o.textContent=u; sel.appendChild(o);
     });
     sel.onchange = ()=> loadChapters(sel.value);
     loadChapters(sel.value);
@@ -64,11 +79,11 @@ async function loadUnits(){
 async function loadChapters(unit){
   try{
     const res = await bridgeCall({ action:"chapters", unit: unit||"" });
+    const list = (res && res.data && res.data.chapters) ? res.data.chapters : ["All Chapters"];
     const sel = document.getElementById('chapterSelect');
-    sel.innerHTML="";
-    const chapters = (res && res.data && res.data.chapters) || ["All Chapters"];
-    chapters.forEach(c => {
-      const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);
+    sel.innerHTML = "";
+    list.forEach(c => {
+      const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);
     });
     sel.onchange = ()=> loadQuestions(unit, sel.value);
     loadQuestions(unit, sel.value);
@@ -77,12 +92,12 @@ async function loadChapters(unit){
 
 async function loadQuestions(unit, chapter){
   try{
-    document.getElementById('questionList').innerHTML="Loading...";
+    document.getElementById('questionList').textContent = "Loading...";
     const res = await bridgeCall({ action:"questions", unit: unit||"", chapter: chapter||"All Chapters" });
-    const box = document.getElementById('questionList'); box.innerHTML="";
-    const qs = (res && res.data && res.data.questions) || [];
-    if (!qs.length){
-      box.innerHTML="<div class='muted'>No questions found.</div>";
+    const qs = (res && res.data && res.data.questions) ? res.data.questions : [];
+    const box = document.getElementById('questionList'); box.innerHTML = "";
+    if (!qs.length) {
+      box.innerHTML = "<div class='muted'>No questions found.</div>";
       return;
     }
     qs.forEach(q=>{
@@ -94,32 +109,32 @@ async function loadQuestions(unit, chapter){
       };
       box.appendChild(d);
     });
-    document.getElementById('message').textContent="";
+    document.getElementById('message').textContent = "";
   }catch(err){ showError(err.message); }
 }
 
 async function ask(){
   try{
-    const unit = document.getElementById('unitSelect').value||"All Units";
-    const chapter = document.getElementById('chapterSelect').value||"All Chapters";
+    const unit = document.getElementById('unitSelect').value || "All Units";
+    const chapter = document.getElementById('chapterSelect').value || "All Chapters";
     const q = document.getElementById('studentQuestion').value.trim();
-    document.getElementById('message').textContent="Searching...";
-    document.getElementById('resultArea').style.display='none';
+    document.getElementById('message').textContent = "Searching...";
+    document.getElementById('resultArea').style.display = 'none';
+    const res = await bridgeCall({ action:"ask", unit, chapter, question:q, minScore:"40" });
+    document.getElementById('message').textContent = "";
+    document.getElementById('resultArea').style.display = 'block';
 
-    const res = await bridgeCall({ action:"ask", unit, chapter, question:q, minScore: "40" });
-    document.getElementById('message').textContent="";
-    document.getElementById('resultArea').style.display='block';
-    if (!res || !res.data || !res.data.matched_question){
-      const score = res && res.data ? (res.data.score||0) : 0;
-      document.getElementById('confidence').textContent="No close match (score "+score+"%)";
-      document.getElementById('answerText').textContent="No close match found. Try rephrasing.";
+    const data = res && res.data;
+    if (!data || !data.matched_question) {
+      const score = data ? (data.score||0) : 0;
+      document.getElementById('confidence').textContent = "No close match (score "+score+"%)";
+      document.getElementById('answerText').textContent = "No close match found. Try rephrasing.";
       return;
     }
-    document.getElementById('confidence').textContent="Confidence: "+res.data.score+"% (matched: "+res.data.matched_question+")";
-    document.getElementById('answerText').textContent=res.data.answer||"(No answer)";
+    document.getElementById('confidence').textContent = "Confidence: "+data.score+"% (matched: "+data.matched_question+")";
+    document.getElementById('answerText').textContent = data.answer || "(No answer)";
   }catch(err){ showError(err.message); }
 }
 
 document.getElementById('askBtn').addEventListener('click', ask);
 loadUnits();
-
