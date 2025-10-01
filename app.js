@@ -1,5 +1,5 @@
 // ========= CONFIG =========
-const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLDWdCWIz27UvyVz9XhaBTBW5vby5q3ai3hkY4qMTf_sN0hfrgmJja7T0-PjpUDLZ6nw/exec"; // your /exec
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLYWPnL6kt4Gv62TMB6L9eVv8xsfzrzzEEalmfUnvhF1Od16u8M8boOKM6EUH8X00jcQ/exec"; // your /exec
 const BRIDGE_TIMEOUT_MS = 30000;
 // ==========================
 
@@ -138,4 +138,5 @@ async function ask(){
 
 document.getElementById('askBtn').addEventListener('click', ask);
 loadUnits();
+
 
