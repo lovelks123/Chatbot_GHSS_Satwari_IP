@@ -1,5 +1,5 @@
 // ============ CONFIG ============
-const EXEC_URL = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_EXEC/exec"; // <- your Apps Script /exec
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbzLDWdCWIz27UvyVz9XhaBTBW5vby5q3ai3hkY4qMTf_sN0hfrgmJja7T0-PjpUDLZ6nw/exec"; // <- your Apps Script /exec
 // ================================
 
 // Call Apps Script via a hidden iframe bridge (no JSONP, no CORS)
@@ -122,3 +122,4 @@ async function ask(){
 
 document.getElementById('askBtn').addEventListener('click', ask);
 loadUnits();
+
