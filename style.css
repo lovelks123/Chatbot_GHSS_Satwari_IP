@@ -1,6 +1,6 @@
 /* Base */
 :root{
-  --bg:#f7f8fb; --card:#fff; --text:#111; --muted:#667085;
+  --bg:#006400; --card:#fff; --text:#111; --muted:#667085;
   --border:#e6e8ee; --primary:#2b7cff; --shadow:0 6px 24px rgba(46,139,87,1);
 }
 *{box-sizing:border-box}
