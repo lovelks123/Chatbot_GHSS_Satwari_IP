@@ -1,5 +1,5 @@
 // ------------ CONFIG ------------
-const EXEC_URL = "https://script.google.com/macros/s/AKfycbxWDSzNIWghMFoYUAfV6fMe0br-CeKdnK5g3MEIn4_7NHZ5mwiuuEtx8e623YdcPVqo4A/exec"; // <-- your /exec
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbxAzmIaSCrYvYB7Aiza1ylQUumdqMip2pOsWHyhJE05r5-gz1d4UoIe6l60XsbCLkgr5w/exec"; // <-- your /exec
 // ---------- CONFIG: your Apps Script /exec URL ----------
 
 // JSONP loader with extra Edge-friendly tweaks
@@ -158,3 +158,4 @@ async function ask(){
 document.getElementById('askBtn').addEventListener('click', ask);
 console.log("[init] JSONP frontend (Edge-tuned)");
 loadUnits();
+
