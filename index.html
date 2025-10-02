@@ -7,43 +7,55 @@
   <style>
     body{font-family:Arial,Helvetica,sans-serif;margin:18px;background:#f7f8fb;color:#111}
     .container{max-width:900px;margin:0 auto;background:#fff;padding:18px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-    h1{text-align:center}
+    h1{margin:0 0 12px;text-align:center}
     select,input[type=text]{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
     button{padding:8px 12px;border-radius:6px;border:none;background:#2b7cff;color:#fff;cursor:pointer}
+    .muted{color:#666;font-size:0.95em}
     .qitem{padding:8px;border-bottom:1px solid #eee;cursor:pointer}
     .card{background:#fbfbff;padding:12px;border-radius:6px;margin-top:10px;border:1px solid #eef2ff}
-    .muted{color:#666;font-size:0.95em}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:700px){ .row{grid-template-columns:1fr} }
+    .error{color:#b00020;font-weight:600}
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>Class Chatbot</h1>
-  <div>
-    <label><b>Select Unit</b></label>
-    <select id="unitSelect"></select>
-  </div>
-  <div>
-    <label><b>Select Chapter</b></label>
-    <select id="chapterSelect"></select>
-  </div>
-  <div style="margin-top:12px">
-    <label><b>Or browse questions</b></label>
-    <div id="questionList" style="border:1px solid #eee;padding:6px;max-height:320px;overflow:auto"></div>
-  </div>
-  <div style="margin-top:12px">
-    <label><b>Ask a question</b></label>
-    <input id="studentQuestion" type="text" placeholder="Type your question"/>
-  </div>
-  <div style="margin-top:10px">
-    <button id="askBtn">Get Answer</button>
-  </div>
-  <div id="resultArea" class="card" style="display:none">
-    <div class="muted" id="confidence"></div>
-    <div id="answerText" style="white-space:pre-wrap;margin-top:8px"></div>
-  </div>
-  <div id="message" class="muted" style="margin-top:12px"></div>
-</div>
+  <div class="container">
+    <h1>Class Chatbot</h1>
 
-<script src="app.js"></script>
+    <div class="row">
+      <div>
+        <label><strong>Select Unit</strong></label>
+        <select id="unitSelect"></select>
+      </div>
+      <div>
+        <label><strong>Select Chapter</strong></label>
+        <select id="chapterSelect"></select>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label><strong>Or browse questions</strong></label>
+      <div id="questionList" style="border:1px solid #eee;border-radius:6px;background:#fff;max-height:320px;overflow:auto;padding:6px"></div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label><strong>Ask a question</strong></label>
+      <input id="studentQuestion" type="text" placeholder="Type your question here"/>
+    </div>
+
+    <div style="margin-top:10px">
+      <button id="askBtn">Get Answer</button>
+    </div>
+
+    <div id="resultArea" class="card" style="display:none">
+      <div class="muted" id="confidence"></div>
+      <div id="answerText" style="white-space:pre-wrap;margin-top:8px"></div>
+    </div>
+
+    <div id="message" class="muted" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- Force cache-bust with ?v=xxx -->
+  <script src="app.js?v=edgerobust1"></script>
 </body>
 </html>
