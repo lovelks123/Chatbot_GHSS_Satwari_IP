@@ -19,7 +19,7 @@ body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-
 .field{display:flex; flex-direction:column; gap:6px; margin:6px 0}
 .label{color:var(--muted); font-size:.92rem}
 .input{
-  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; outline:none; background:#fff;
+  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; outline:none; background:#2E8B57;
 }
 .input:focus{border-color:var(--primary); box-shadow:0 0 0 2px rgba(43,124,255,.12)}
 .btn{
