@@ -2,60 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Class Chatbot</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;margin:18px;background:#f7f8fb;color:#111}
-    .container{max-width:900px;margin:0 auto;background:#fff;padding:18px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-    h1{margin:0 0 12px;text-align:center}
-    select,input[type=text]{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
-    button{padding:8px 12px;border-radius:6px;border:none;background:#2b7cff;color:#fff;cursor:pointer}
-    .muted{color:#666;font-size:0.95em}
-    .qitem{padding:8px;border-bottom:1px solid #eee;cursor:pointer}
-    .card{background:#fbfbff;padding:12px;border-radius:6px;margin-top:10px;border:1px solid #eef2ff}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:700px){ .row{grid-template-columns:1fr} }
-    .error{color:#b00020;font-weight:600}
-  </style>
+  
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-  <div class="container">
-    <h1>Class Chatbot</h1>
+  <div class="app">
+    <header class="appbar">Class Chatbot</header>
 
-    <div class="row">
-      <div>
-        <label><strong>Select Unit</strong></label>
-        <select id="unitSelect"></select>
-      </div>
-      <div>
-        <label><strong>Select Chapter</strong></label>
-        <select id="chapterSelect"></select>
-      </div>
-    </div>
+    <main class="container">
+      <section class="card">
+        <div class="grid">
+          <label class="field">
+            <span class="label">Select Unit</span>
+            <select id="unitSelect" class="input"></select>
+          </label>
+          <label class="field">
+            <span class="label">Select Chapter</span>
+            <select id="chapterSelect" class="input"></select>
+          </label>
+        </div>
+      </section>
 
-    <div style="margin-top:12px">
-      <label><strong>Or browse questions</strong></label>
-      <div id="questionList" style="border:1px solid #eee;border-radius:6px;background:#fff;max-height:320px;overflow:auto;padding:6px"></div>
-    </div>
+      <section class="card">
+        <div class="field">
+          <span class="label">Ask a question</span>
+          <div class="row">
+            <input id="studentQuestion" type="text" class="input" placeholder="Type your question…">
+            <button id="askBtn" class="btn">Get Answer</button>
+          </div>
+        </div>
+      </section>
 
-    <div style="margin-top:12px">
-      <label><strong>Ask a question</strong></label>
-      <input id="studentQuestion" type="text" placeholder="Type your question here"/>
-    </div>
+      <section class="card">
+        <span class="label">Browse Questions</span>
+        <div id="questionList" class="list"></div>
+      </section>
 
-    <div style="margin-top:10px">
-      <button id="askBtn">Get Answer</button>
-    </div>
+      <section id="resultArea" class="card hidden">
+        <div id="confidence" class="badge"></div>
+        <div id="answerText" class="answer"></div>
+      </section>
 
-    <div id="resultArea" class="card" style="display:none">
-      <div class="muted" id="confidence"></div>
-      <div id="answerText" style="white-space:pre-wrap;margin-top:8px"></div>
-    </div>
-
-    <div id="message" class="muted" style="margin-top:12px;"></div>
+      <div id="message" class="muted"></div>
+    </main>
   </div>
 
-  <!-- Force cache-bust with ?v=xxx -->
-  <script src="app.js?v=edgerobust1"></script>
+  <!-- keep your existing JS file name/path -->
+  <script src="app.js?v=edgerobust2" defer></script>
+  <script>
+    // one tiny enhancement: reveal the answer card when app.js fills it
+    const originalShow = document.getElementById('resultArea');
+    const obs = new MutationObserver(() => originalShow.classList.remove('hidden'));
+    obs.observe(originalShow, { attributes: true, attributeFilter: ['style'] });
+  </script>
 </body>
 </html>
