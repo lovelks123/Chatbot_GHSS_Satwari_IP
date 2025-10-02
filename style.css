@@ -1,7 +1,7 @@
 /* Base */
 :root{
   --bg:#2E8B57; --card:#fff; --text:#111; --muted:#667085;
-  --border:#e6e8ee; --primary:#2b7cff; --shadow:0 6px 24px rgba(0,0,0,.06);
+  --border:#e6e8ee; --primary:#2E8B57; --shadow:0 6px 24px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box}
 body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color:var(--text); background:var(--bg);}
