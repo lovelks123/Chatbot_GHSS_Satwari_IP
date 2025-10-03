@@ -1,35 +1,35 @@
 /* ===========================
-   Pink Theme (Light / Dark)
-   Works with your existing HTML/JS
+   Clean Pink + White Theme (Light only)
+   Works with your existing HTML/JS classes
    =========================== */
 
-/* ----- Light theme tokens ----- */
 :root{
-  /* Core */
-  --bg:          #fff7fb;           /* very light pink background */
-  --card:        #ffffff;           /* cards always white */
-  --text:        #261320;           /* deep plum text */
-  --muted:       #8a667b;           /* muted text */
-  --border:      #f3cfe0;           /* soft pink border */
+  /* Palette */
+  --pink-50:  #fff7fb;   /* page bg (very light pink) */
+  --pink-100: #ffe9f3;   /* soft surfaces */
+  --pink-200: #ffd6e7;   /* borders / mists */
+  --pink-400: #ff8fb8;   /* light accent */
+  --pink-500: #ff6aa6;   /* main accent (lighter) */
+  --pink-600: #ff4da0;   /* main accent */
+  --pink-700: #d62a7a;   /* deep accent (hover/active) */
 
-  /* Primary pinks */
-  --primary:           #ff2e8a;     /* main pink */
-  --primary-strong:    #d81b60;     /* deeper pink for hover/press */
-  --primary-soft:      #ffe0ef;     /* very soft for backgrounds */
-  --ring:              rgba(255, 46, 138, .35);
-
-  /* Shadows */
-  --shadow: 0 10px 30px rgba(216, 27, 96, .10);
-
-  /* List background mist */
-  --mist: linear-gradient(0deg, #ffe7f1, transparent 60%);
+  --bg:        var(--pink-50);
+  --card:      #ffffff;
+  --text:      #22131d;  /* rich plum */
+  --muted:     #7b5c71;  /* muted plum */
+  --border:    var(--pink-200);
+  --primary:   var(--pink-600);
+  --primary2:  var(--pink-700);
+  --soft:      var(--pink-100);
+  --ring:      rgba(255, 77, 160, .35);
+  --shadow:    0 8px 28px rgba(214,42,122,.12);
 }
 
-/* ----- Base layout ----- */
-*{ box-sizing: border-box; }
+/* Base */
+*{ box-sizing:border-box; }
 body{
   margin:0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   color:var(--text);
   background:var(--bg);
 }
@@ -39,34 +39,33 @@ body{
   position:sticky; top:0; z-index:10;
   padding:12px 16px; text-align:center; font-weight:700; letter-spacing:.2px;
   color:#fff;
-  background: linear-gradient(90deg, var(--primary), #ff5aa8);
+  background: linear-gradient(90deg, var(--primary), var(--primary2));
   border-bottom:1px solid var(--border);
   box-shadow: var(--shadow);
 }
 
-/* Containers & cards */
+/* Layout */
 .container{ max-width:900px; margin:16px auto; padding:0 14px; }
 .card{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:14px;
-  box-shadow:var(--shadow);
+  box-shadow: var(--shadow);
   padding:12px;
   margin:10px 0;
 }
 
-/* Grid / Rows */
 .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 @media (max-width:700px){ .grid{ grid-template-columns:1fr; } }
 .row{ display:flex; gap:8px; }
 @media (max-width:700px){ .row{ flex-direction:column; } }
 
-/* Labels & helper text */
+/* Text helpers */
 .field{ display:flex; flex-direction:column; gap:6px; margin:6px 0; }
 .label{ color:var(--muted); font-size:.92rem; }
 .muted{ color:var(--muted); margin:6px 2px; }
 
-/* Inputs & selects */
+/* Inputs & selects (white with pink accents) */
 .input{
   width:100%;
   padding:10px 12px;
@@ -76,7 +75,7 @@ body{
   background:#fff;
   color:var(--text);
   transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-  appearance:none; /* nicer selects on iOS */
+  appearance:none; /* nicer select arrow on mobile */
   background-image:
     linear-gradient(45deg, transparent 50%, var(--primary) 50%),
     linear-gradient(135deg, var(--primary) 50%, transparent 50%),
@@ -85,21 +84,18 @@ body{
     calc(100% - 20px) calc(1em + 2px),
     calc(100% - 15px) calc(1em + 2px),
     100% 0;
-  background-size:
-    5px 5px,
-    5px 5px,
-    2.5em 2.5em;
+  background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
   background-repeat: no-repeat;
+}
+.input:hover{
+  background: var(--soft);
 }
 .input:focus{
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--ring);
 }
-.input:hover{
-  background: var(--primary-soft);
-}
 
-/* Buttons */
+/* Buttons (two looks: solid pink by default, optional outline if you add .btn-outline) */
 .btn{
   white-space:nowrap;
   padding:10px 14px;
@@ -107,23 +103,36 @@ body{
   border-radius:12px;
   cursor:pointer;
   color:#fff;
-  background: linear-gradient(180deg, #ff3e96, var(--primary));
-  box-shadow: 0 6px 18px rgba(216, 27, 96, .25);
-  transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
+  background: linear-gradient(180deg, var(--pink-500), var(--primary));
+  box-shadow: 0 6px 18px rgba(214,42,122,.22);
+  transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
 }
 .btn:hover{
-  filter: brightness(1.05);
-  box-shadow: 0 10px 26px rgba(216, 27, 96, .30);
+  filter: brightness(1.04);
+  box-shadow: 0 10px 26px rgba(214,42,122,.30);
 }
 .btn:active{ transform: translateY(1px); }
-.btn:focus-visible{ outline: 3px solid var(--ring); }
+.btn:focus-visible{ outline: 3px solid var(--ring); outline-offset:2px; }
+
+/* Optional outline style (use by adding class="btn btn-outline") */
+.btn-outline{
+  background:#fff; color:var(--primary);
+  border:1px solid var(--primary);
+  box-shadow:none;
+}
+.btn-outline:hover{
+  background: var(--soft);
+  box-shadow: 0 2px 12px rgba(214,42,122,.12);
+}
 
 /* Question list */
 .list{
   max-height:360px; overflow:auto;
   border:1px dashed var(--border);
-  border-radius:12px; padding:6px; background:#fff;
-  background-image: var(--mist);
+  border-radius:12px;
+  padding:6px;
+  background:#fff;
+  background-image: linear-gradient(0deg, var(--soft), transparent 60%);
 }
 .list > div{
   padding:12px; margin:6px;
@@ -145,8 +154,8 @@ body{
   display:inline-block;
   padding:6px 10px;
   border-radius:20px;
-  background: var(--primary-soft);
-  color: var(--primary-strong);
+  background: var(--soft);
+  color: var(--primary2);
   font-size:.85rem;
   margin-bottom:6px;
 }
@@ -156,43 +165,18 @@ body{
   line-height:1.55;
 }
 
-/* Small utility for nice focus on keyboard nav */
+/* Nice focus for keyboard users */
 :focus-visible{
   outline: 3px solid var(--ring);
   outline-offset: 2px;
   border-radius: 8px;
 }
 
-/* Scrollbar (WebKit) — soft pink */
+/* Soft pink scrollbar (WebKit) */
 .list::-webkit-scrollbar{ width:10px; height:10px; }
 .list::-webkit-scrollbar-thumb{
-  background: #ffc3da;
+  background: #ffc4dd;
   border-radius: 10px;
   border: 2px solid #fff;
 }
 .list::-webkit-scrollbar-track{ background: #fff0f6; border-radius:10px; }
-
-/* ===========================
-   Optional Dark Mode (auto)
-   =========================== */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:          #1a0f17;
-    --card:        #23101e;
-    --text:        #fdeefa;
-    --muted:       #d7b8c9;
-    --border:      #4a2740;
-
-    --primary:           #ff4da0;
-    --primary-strong:    #ff2e8a;
-    --primary-soft:      #3b2034;
-    --ring:              rgba(255, 77, 160, .40);
-
-    --shadow: 0 10px 30px rgba(0,0,0,.45);
-    --mist: linear-gradient(0deg, rgba(255,77,160,.08), transparent 60%);
-  }
-
-  .input{ background:#2a1625; color:var(--text); }
-  .list{ background:#2a1625; }
-  .list > div{ background:#2a1625; }
-}
