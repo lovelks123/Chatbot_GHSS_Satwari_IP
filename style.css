@@ -1,48 +1,198 @@
-/* Base */
+/* ===========================
+   Pink Theme (Light / Dark)
+   Works with your existing HTML/JS
+   =========================== */
+
+/* ----- Light theme tokens ----- */
 :root{
-  --bg:#2E8B57; --card:#fff; --text:#111; --muted:#667085;
-  --border:#e6e8ee; --primary:#2E8B57; --shadow:0 6px 24px rgba(52,243,135,.78);
+  /* Core */
+  --bg:          #fff7fb;           /* very light pink background */
+  --card:        #ffffff;           /* cards always white */
+  --text:        #261320;           /* deep plum text */
+  --muted:       #8a667b;           /* muted text */
+  --border:      #f3cfe0;           /* soft pink border */
+
+  /* Primary pinks */
+  --primary:           #ff2e8a;     /* main pink */
+  --primary-strong:    #d81b60;     /* deeper pink for hover/press */
+  --primary-soft:      #ffe0ef;     /* very soft for backgrounds */
+  --ring:              rgba(255, 46, 138, .35);
+
+  /* Shadows */
+  --shadow: 0 10px 30px rgba(216, 27, 96, .10);
+
+  /* List background mist */
+  --mist: linear-gradient(0deg, #ffe7f1, transparent 60%);
 }
-*{box-sizing:border-box}
-body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color:var(--text); background:var(--bg);}
+
+/* ----- Base layout ----- */
+*{ box-sizing: border-box; }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+
+/* App bar */
 .appbar{
-  position:sticky; top:0; z-index:10; padding:12px 16px; font-weight:700; text-align:center;
-  background:rgba(255,255,255,.9); border-bottom:1px solid var(--border); backdrop-filter:saturate(1.2) blur(6px);
+  position:sticky; top:0; z-index:10;
+  padding:12px 16px; text-align:center; font-weight:700; letter-spacing:.2px;
+  color:#fff;
+  background: linear-gradient(90deg, var(--primary), #ff5aa8);
+  border-bottom:1px solid var(--border);
+  box-shadow: var(--shadow);
 }
-.container{max-width:900px; margin:16px auto; padding:0 14px}
+
+/* Containers & cards */
+.container{ max-width:900px; margin:16px auto; padding:0 14px; }
 .card{
-  background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow);
-  padding:12px; margin:10px 0;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:12px;
+  margin:10px 0;
 }
 
-/* Controls */
-.field{display:flex; flex-direction:column; gap:6px; margin:6px 0}
-.label{color:var(--muted); font-size:.92rem}
+/* Grid / Rows */
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:700px){ .grid{ grid-template-columns:1fr; } }
+.row{ display:flex; gap:8px; }
+@media (max-width:700px){ .row{ flex-direction:column; } }
+
+/* Labels & helper text */
+.field{ display:flex; flex-direction:column; gap:6px; margin:6px 0; }
+.label{ color:var(--muted); font-size:.92rem; }
+.muted{ color:var(--muted); margin:6px 2px; }
+
+/* Inputs & selects */
 .input{
-  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; outline:none; background:#e6e8ee;
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  appearance:none; /* nicer selects on iOS */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--primary) 50%),
+    linear-gradient(135deg, var(--primary) 50%, transparent 50%),
+    linear-gradient(to right, #fff, #fff); /* arrow bg */
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    100% 0;
+  background-size:
+    5px 5px,
+    5px 5px,
+    2.5em 2.5em;
+  background-repeat: no-repeat;
 }
-.input:focus{border-color:var(--primary); box-shadow:0 0 0 2px rgba(43,124,255,.12)}
+.input:focus{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+.input:hover{
+  background: var(--primary-soft);
+}
+
+/* Buttons */
 .btn{
-  white-space:nowrap; padding:10px 14px; border:none; border-radius:10px; background:var(--primary); color:#e6e8ee; cursor:pointer;
+  white-space:nowrap;
+  padding:10px 14px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  color:#fff;
+  background: linear-gradient(180deg, #ff3e96, var(--primary));
+  box-shadow: 0 6px 18px rgba(216, 27, 96, .25);
+  transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
 }
-.row{display:flex; gap:8px}
-@media (max-width:700px){ .row{flex-direction:column} }
+.btn:hover{
+  filter: brightness(1.05);
+  box-shadow: 0 10px 26px rgba(216, 27, 96, .30);
+}
+.btn:active{ transform: translateY(1px); }
+.btn:focus-visible{ outline: 3px solid var(--ring); }
 
-/* Layout helpers */
-.grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-@media (max-width:700px){ .grid{grid-template-columns:1fr} }
-.muted{color:var(--muted); margin:6px 2px}
-
-/* List */
+/* Question list */
 .list{
-  max-height:360px; overflow:auto; border:1px dashed var(--border); border-radius:10px; padding:6px; background:#20B2AA.;
+  max-height:360px; overflow:auto;
+  border:1px dashed var(--border);
+  border-radius:12px; padding:6px; background:#fff;
+  background-image: var(--mist);
 }
 .list > div{
-  padding:10px; border:1px solid var(--border); border-radius:10px; margin:6px; cursor:pointer;
+  padding:12px; margin:6px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+  cursor:pointer;
 }
-.list > div:hover{ box-shadow:var(--shadow) }
+.list > div:hover{
+  transform: translateY(-1px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+}
 
-/* Answer */
-.hidden{display:none}
-.badge{display:inline-block; padding:6px 10px; border-radius:20px; background:#e9f1ff; color:#d9ff64d9; font-size:.85rem; margin-bottom:6px}
-.answer{white-space:pre-wrap; font-size:1.02rem; line-height:1.5}
+/* Answer panel */
+.hidden{ display:none; }
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size:.85rem;
+  margin-bottom:6px;
+}
+.answer{
+  white-space:pre-wrap;
+  font-size:1.04rem;
+  line-height:1.55;
+}
+
+/* Small utility for nice focus on keyboard nav */
+:focus-visible{
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Scrollbar (WebKit) — soft pink */
+.list::-webkit-scrollbar{ width:10px; height:10px; }
+.list::-webkit-scrollbar-thumb{
+  background: #ffc3da;
+  border-radius: 10px;
+  border: 2px solid #fff;
+}
+.list::-webkit-scrollbar-track{ background: #fff0f6; border-radius:10px; }
+
+/* ===========================
+   Optional Dark Mode (auto)
+   =========================== */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:          #1a0f17;
+    --card:        #23101e;
+    --text:        #fdeefa;
+    --muted:       #d7b8c9;
+    --border:      #4a2740;
+
+    --primary:           #ff4da0;
+    --primary-strong:    #ff2e8a;
+    --primary-soft:      #3b2034;
+    --ring:              rgba(255, 77, 160, .40);
+
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --mist: linear-gradient(0deg, rgba(255,77,160,.08), transparent 60%);
+  }
+
+  .input{ background:#2a1625; color:var(--text); }
+  .list{ background:#2a1625; }
+  .list > div{ background:#2a1625; }
+}
