@@ -2,67 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>BOT</title>
-  
-  <link rel="stylesheet" href="style.css?v=2">
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Class Chatbot</title>
+
+  <!-- your pink theme stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* small, unobtrusive helper styles */
+    .disabled { opacity: .55; pointer-events: none; }
+    .hint { color: var(--muted, #6b7280); font-size: .92rem; margin-top: 6px; }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <header class="appbar">GHSS SATWARI BOT ON CLASS XI IP SUBJECT</header>
+  <div class="appbar">Class Chatbot</div>
 
-    <main class="container">
-      <section class="card">
-        <div class="grid">
-          <label class="field">
-            <span class="label"><B>Select Unit</B></span>
-            <select id="unitSelect" class="input"></select>
-          </label>
-          <label class="field">
-            <span class="label"><B>Select Chapter</B></span>
-            <select id="chapterSelect" class="input"></select>
-          </label>
-        </div>
-      </section>
-
-      <section class="card">
+  <div class="container">
+    <div class="card">
+      <div class="grid">
         <div class="field">
-          <span class="label"><B>Ask a question</B></span>
-          <div class="row">
-            <input id="studentQuestion" type="text" class="input" placeholder="Type your question…">
-            <button id="askBtn" class="btn">Get Answer</button>
-          </div>
+          <label class="label" for="unitSelect">Select Unit</label>
+          <select id="unitSelect" class="input" title="Select Unit">
+            <option value="" selected disabled>— Choose a unit —</option>
+          </select>
         </div>
-      </section>
 
-      <section class="card">
-        <span class="label"><B>Browse Questions</B></span>
-        <div id="questionList" class="list"></div>
-      </section>
+        <div class="field">
+          <label class="label" for="chapterSelect">Select Chapter</label>
+          <select id="chapterSelect" class="input" title="Select Chapter" disabled>
+            <option value="" selected disabled>— Choose a unit first —</option>
+          </select>
+        </div>
+      </div>
 
-      <section id="resultArea" class="card hidden">
-        <div id="confidence" class="badge"></div>
-        <div id="answerText" class="answer"></div>
-      </section>
+      <div class="field" style="margin-top:12px">
+        <label class="label"><strong>Or browse questions</strong></label>
+        <div id="questionList" class="list">
+          <div class="hint">Pick a unit and chapter to see questions.</div>
+        </div>
+      </div>
 
-      <div id="message" class="muted"></div>
-    </main>
+      <div class="field" style="margin-top:12px">
+        <label class="label" for="studentQuestion"><strong>Ask a question</strong></label>
+        <input id="studentQuestion" class="input" type="text"
+               placeholder="Type your question (works within the selected chapter)"/>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="askBtn" class="btn disabled" disabled>Get Answer</button>
+      </div>
+    </div>
+
+    <div id="resultArea" class="card hidden">
+      <div class="badge" id="confidence"></div>
+      <div id="answerText" class="answer"></div>
+    </div>
+
+    <div id="message" class="muted" style="margin-top:12px;"></div>
   </div>
 
-  <!-- keep your existing JS file name/path -->
-  <script src="app.js?v=edgerobust2" defer></script>
-  <script>
-    // one tiny enhancement: reveal the answer card when app.js fills it
-    const originalShow = document.getElementById('resultArea');
-    const obs = new MutationObserver(() => originalShow.classList.remove('hidden'));
-    obs.observe(originalShow, { attributes: true, attributeFilter: ['style'] });
-  </script>
+  <!-- IMPORTANT: bump the version when you redeploy GAS or change app.js -->
+  <script src="app.js?v=edgerobust4" defer></script>
 </body>
 </html>
-
-
-
-
-
-
-
