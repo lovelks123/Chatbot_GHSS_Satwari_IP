@@ -23,7 +23,7 @@ body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-
 }
 .input:focus{border-color:var(--primary); box-shadow:0 0 0 2px rgba(43,124,255,.12)}
 .btn{
-  white-space:nowrap; padding:10px 14px; border:none; border-radius:10px; background:var(--primary); color:#43ff64d9; cursor:pointer;
+  white-space:nowrap; padding:10px 14px; border:none; border-radius:10px; background:var(--primary); color:#e6e8ee; cursor:pointer;
 }
 .row{display:flex; gap:8px}
 @media (max-width:700px){ .row{flex-direction:column} }
