@@ -208,6 +208,7 @@ askBtn.addEventListener("click", ask);
 
 /* ====== Boot ====== */
 (function init(){
+  console.log("[init] JSONP frontend (Edge-tuned)");
   console.log("[init] student UI (unit→chapter→questions)");
   loadUnits();
 })();
