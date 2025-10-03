@@ -1,6 +1,6 @@
 /* ====== CONFIG ====== */
 // Put your latest Apps Script *exec* URL here:
-const API_ROOT = "https://SCRIPT_GOOGLE_COM_EXEC_URL/exec"; // <-- replace
+const API_ROOT = "https://script.google.com/macros/s/AKfycbxFrm6khxM_lvQBj5kQAFAQB0NG5p3cbiwKhBIWkhNZInIoLJQLVkxi46D8JR7-9kuATQ/exec"; // <-- replace
 
 /* ====== Minimal JSONP helper (Edge/Chrome/Firefox friendly) ====== */
 function jsonp(url, cbName){
@@ -212,3 +212,4 @@ askBtn.addEventListener("click", ask);
   console.log("[init] student UI (unit→chapter→questions)");
   loadUnits();
 })();
+
