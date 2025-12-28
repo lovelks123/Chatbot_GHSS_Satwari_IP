@@ -161,12 +161,18 @@ async function loadQuestions(unit, chapter){
   ans.textContent = q.answer || "(No answer available)";
 
   ques.onclick = () => {
+    // Close all other answers
+    document.querySelectorAll('.qanswer').forEach(a => {
+      if (a !== ans) a.classList.add('hidden');
+    });
+
+    // Toggle selected answer
     ans.classList.toggle('hidden');
   };
 
   wrapper.appendChild(ques);
   wrapper.appendChild(ans);
-  box.appendChild(wrapper);
+  listBox.appendChild(wrapper);
 });
 
     setMessage("");
@@ -233,4 +239,5 @@ document.getElementById('askBtn').addEventListener('click', ask);
 console.log("[init] JSONP frontend (Edge-tuned)");
 console.log("[init] student UI (unit→chapter→questions)");
 loadUnits();
+
 
