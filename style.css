@@ -187,9 +187,10 @@ body{
 
 .qanswer {
   margin-top: 6px;
-  padding: 10px;
-  border-left: 4px solid #ff5ca8;
-  background: #fff0f6;
+  padding: 10px 12px;
+  border-left: 4px solid #8b5cf6;   /* purple accent */
+  background: #f3e8ff;             /* light lavender */
+  color: #4c1d95;                  /* deep purple text */
   border-radius: 6px;
   font-size: 0.95rem;
 }
