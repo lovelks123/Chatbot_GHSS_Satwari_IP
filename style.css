@@ -180,3 +180,21 @@ body{
   border: 2px solid #fff;
 }
 .list::-webkit-scrollbar-track{ background: #fff0f6; border-radius:10px; }
+
+.qwrap {
+  margin-bottom: 10px;
+}
+
+.qanswer {
+  margin-top: 6px;
+  padding: 10px;
+  border-left: 4px solid #ff5ca8;
+  background: #fff0f6;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.hidden {
+  display: none;
+}
+
